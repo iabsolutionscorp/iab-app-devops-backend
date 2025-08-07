@@ -1,0 +1,13 @@
+services:
+  aiac:
+    image: ghcr.io/gofireflyio/aiac:latest
+    container_name: aiac
+    # impede o aiac CLI de rodar sozinho
+    entrypoint:
+      - sleep
+      - "infinity"
+    # monta o diretório de configuração
+    volumes:
+      - ./aiac-config/aiac.toml:/root/.config/aiac/aiac.toml:ro
+
+    restart: unless-stopped
