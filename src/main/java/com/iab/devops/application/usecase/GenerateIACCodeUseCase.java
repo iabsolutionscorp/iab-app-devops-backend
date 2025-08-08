@@ -1,7 +1,8 @@
-package com.iab.devops.application;
+package com.iab.devops.application.usecase;
 
 
 import com.iab.devops.application.gateway.GenerativeIAGateway;
+import com.iab.devops.domain.enums.IACType;
 
 public class GenerateIACCodeUseCase {
 
@@ -11,7 +12,7 @@ public class GenerateIACCodeUseCase {
         this.generativeIAGateway = generativeIAGateway;
     }
 
-    public String execute(String prompt) {
-        return generativeIAGateway.generateCode(prompt);
+    public String execute(IACType type, String prompt) {
+        return generativeIAGateway.generateCode(type, prompt);
     }
 }
