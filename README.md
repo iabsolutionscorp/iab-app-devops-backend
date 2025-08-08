@@ -13,7 +13,7 @@ API para **gerenciar arquivos IaC** (Infrastructure as Code): upload, consulta, 
 - Pasta `local/` com `docker-compose.yml`, `createS3Buckets.bat` e exemplos
 - Spring Boot com *profile* `local`
 
-### 3 passos essenciais
+### 4 passos essenciais
 **1) Entrar na pasta de execução**
 ```bash
 cd local
@@ -32,7 +32,18 @@ docker-compose up -d
 ```
 *O que faz?* Cria os **buckets S3** necessários para a aplicação funcionar em local.
 
-**4) Configurar o AWS CLI para LocalStack**
+**4) Configurar a chave da IA (Gemini API)**  
+O arquivo `aiac.toml` está configurado para ler a chave da variável de ambiente `GEMINI_API_KEY`.  
+Crie a variável no seu sistema:
+```bash
+set GEMINI_API_KEY="sua_chave_aqui"
+```
+- Ou configure na sua IDE (Run Configurations)
+> 🔗 Gere sua chave gratuita em: [Google AI Studio](https://aistudio.google.com/app/apikey)  
+> ⚠️ Contas gratuitas possuem **limite de requisições diárias**.
+
+---
+**5) Configurar o AWS CLI para LocalStack**
 ```bash
 aws configure
 AWS Access Key ID: localstack
@@ -41,21 +52,23 @@ Default region: us-east-1
 Default output format: json
 ```
 
-**5) Ativar o profile do Spring**
+**6) Ativar o profile do Spring**
 - Variável de ambiente: `SPRING_PROFILES_ACTIVE=local`
 - Ou configure na sua IDE (Run Configurations)
 
-**Acessar o Swagger**
+**7) Acessar o Swagger**
+
 ```
 http://localhost:8080/swagger-ui.html
 ```
 
+No swagger são onde podem ser feitas todas as requisições possíveis de forma visual e intuitiva, mais abaixo estão 
+descritas as funcionalidades de cada endpoint.
+
 > 💡 **Arquivo de exemplo**: já existe um **`iac-file-example`** na pasta `local/`. Use-o se não quiser escrever um Terraform do zero — ou gere um novo via IA com o endpoint **POST `/v1/iac/generate`**.
 
 > 🎯 **Destino de deploy**: o `application.yaml` está configurado para **LocalStack** por padrão.  
-> Para apontar para a sua **conta AWS real**, ajuste as variáveis de ambiente da sessão **AWS** (ex.: `AWS_ACCESS_KEY_ID`, 
-> `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`), remova/atualize endpoints específicos do LocalStack (ex.: `AWS_S3_ENDPOINT`),
-> e inicie o `SPRING_PROFILES_ACTIVE` sem estar como local.
+> Para apontar para a sua **conta AWS real**, ajuste as variáveis de ambiente da sessão **AWS** (ex.: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`) e remova/atualize endpoints específicos do LocalStack (ex.: `AWS_S3_ENDPOINT`) conforme necessário.
 
 ---
 
