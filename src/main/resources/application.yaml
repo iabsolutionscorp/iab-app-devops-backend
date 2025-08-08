@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: devops
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+aws:
+  accessKeyId: "${AWS_ACCESS_KEY_ID:localstack}"
+  secretAccessKey: "${SECRET_ACCESS_KEY:localstack}"
+  s3:
+    bucket: asm.oms.iac-files
+    endpoint: "${AWS_S3_ENDPOINT:http://localhost:4566}"
+    region: "${AWS_S3_REGION:us-east-1}"
+

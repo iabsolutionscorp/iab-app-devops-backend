@@ -1,12 +1,14 @@
 package com.iab.devops.infra.gateway;
 
 import com.iab.devops.application.gateway.GenerativeIAGateway;
+import com.iab.devops.domain.enums.IACType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.time.LocalTime;
@@ -21,24 +23,9 @@ public class GenerativeIAGatewayImpl implements GenerativeIAGateway {
     private Path workDir;
 
     @Override
-    public String generateCode(String prompt) {
+    public String generateCode(IACType type, String prompt) {
         try {
-            List<String> cmd = List.of(
-                    "docker", "compose",
-                    "exec", "-T", "aiac",
-                    "aiac",
-                    "-b", "gemini",         // backend
-                    "-q",                   // quiet (sem menu interativo)
-                    "--timeout", "120",     // timeout em 120s
-                    "terraform", "for", "aws", // subcomando correto
-                    prompt                  // seu prompt: ex. "cite 3 frutas"
-            );
-
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.directory(new File(workDir.toString()));
-            pb.redirectErrorStream(true);
-
-            Process process = pb.start();
+            Process process = generateCodeWithAI(type, prompt);
 
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream())
@@ -60,5 +47,24 @@ public class GenerativeIAGatewayImpl implements GenerativeIAGateway {
         } catch (Exception ex) {
             throw new RuntimeException("Erro ao executar aiac: " + ex.getMessage(), ex);
         }
+    }
+
+    private Process generateCodeWithAI(IACType type, String prompt) throws IOException {
+        List<String> cmd = List.of(
+                "docker", "compose",
+                "exec", "-T", "aiac",
+                "aiac",
+                "-b", "gemini",
+                "-q",
+                "--timeout", "120",
+                type.name().toLowerCase(), "for", "aws",
+                prompt
+        );
+
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.directory(new File(workDir.toString()));
+        pb.redirectErrorStream(true);
+
+        return pb.start();
     }
 }
